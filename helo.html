@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <!-- 全局样式 -->
+  <!-- <style>
+      html,body,#app{
+        height:100%;
+        margin: 0px;
+        padding: 0px;
+      }
+    </style> -->
+
+  <!-- 导入 Vue 3 -->
+  <script src="https:////unpkg.com/vue@next"></script>
+  <!-- 导入element样式 -->
+  <link rel="stylesheet" href="https:////unpkg.com/element-plus/dist/index.css" />
+  <!-- 导入组件库 -->
+  <script src="https:////unpkg.com/element-plus"></script>
+  <!-- 导入axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+</head>
+
+<body>
+  <div id="app">
+    <!-- 搜索框 -->
+    <div>
+      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+
+        <el-form-item label="状态">
+          <el-select v-model="formInline.status" placeholder="status">
+            <el-option label="1" value="1"></el-option>
+            <el-option label="0" value="0"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="名字">
+          <el-input v-model="formInline.name" placeholder="名字"></el-input>
+        </el-form-item>
+        <el-form-item label="地址">
+          <el-input v-model="formInline.addr" placeholder="审批人"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+    <!-- 按钮和对话框 -->
+    <div>
+      <el-button type="danger">批量删除</el-button>
+      <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
+
+      <el-dialog title="编辑" v-model="dialogFormVisible">
+        <el-form ref="form" :model="formInline" label-width="80px">
+          <el-form-item label="姓名">
+            <el-input v-model="formInline.name"></el-input>
+          </el-form-item>
+
+          <el-form-item label="日期">
+            <el-input v-model="formInline.date"></el-input>
+          </el-form-item>
+
+          <el-form-item label="状态">
+            <el-switch v-model="formInline.status" active-value="1" inactive-value="0"></el-switch>
+          </el-form-item>
+
+          <el-form-item label="备注">
+            <el-input type="textarea" v-model="formInline.desc"></el-input>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="primary" @click="AddItem">立即创建</el-button>
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
+    </div>
+
+    <!-- 表格 -->
+    <div id="theTable">
+      <el-table :data="tableData" stripe border style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" align="center" width="55"> </el-table-column>
+        <el-table-column type="index" align="center" width="60"> </el-table-column>
+        <!-- <el-table-column prop="date" label="日期" width="180"> </el-table-column> -->
+        <el-table-column prop="date" label="日期"> </el-table-column>
+        <el-table-column prop="name" label="姓名"> </el-table-column>
+        <el-table-column prop="address" align="center" label="地址"> </el-table-column>
+        <el-table-column prop="status" label="状态"> </el-table-column>
+        <el-table-column align="center" label="操作">
+          <el-button type="primary">修改</el-button>
+          <el-button type="danger">删除</el-button>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <!-- 分页 -->
+    <div class="block">
+      <!-- <span class="demonstration">完整功能</span> -->
+      <el-pagination v-model:currentPage="currentPage" v-model:page-size=100 :page-sizes="[100, 200, 300, 400]"
+        :small="small" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper"
+        :total="400" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      </el-pagination>
+    </div>
+  </div>
+
+  <script>
+    const App = {
+      methods: {
+        //复选框选中后执行
+        handleSelectionChange(val) {
+          this.multipleSelection = val;
+          // console.log(this.multipleSelection);
+        },
+        //搜索
+        onSubmit() {
+          console.log('submit!')
+        },
+        AddItem() {
+          // console.log(this.formInline);
+          var _this = this;
+          axios({
+            method: "post",
+            url: "http://localhost",
+            data: _this.formInline,
+          }).then(function (response) {
+            if (response.data == "success") {
+              //关闭对话框
+              _this.dialogFormVisible = false;
+              //再次查询
+              this.SelectionAll();
+            }
+          });
+        },
+
+        SelectionAll() {
+          var _this = this;
+          axios({
+            methods: "get",
+            url: ""
+          }).then(function (response) {
+            _this.tableData = response.data;
+          });
+        },
+
+        handleSizeChange(val) {
+          console.log(`每页 ${val} 条`)
+        },
+        handleCurrentChange(val) {
+          console.log(`当前页: ${val}`)
+        },
+      },
+      data() {
+        return {
+          //搜索表单数据
+          formInline: {
+            status: '',
+            name: '',
+            addr: '',
+            date: '',
+            desc: '',
+          },
+          //表格数据
+          tableData: [
+            {
+              date: '2016-05-02',
+              name: '王一虎',
+              address: '上海市普陀区金沙江路 1518 弄',
+              status: "1"
+            },
+            {
+              date: '2016-05-04',
+              name: '王二虎',
+              address: '上海市普陀区金沙江路 1517 弄',
+              status: "1"
+            },
+            {
+              date: '2016-05-01',
+              name: '王三虎',
+              address: '上海市普陀区金沙江路 1519 弄',
+              status: "1"
+            },
+            {
+              date: '2016-05-03',
+              name: '王四虎',
+              address: '上海市普陀区金沙江路 1516 弄',
+              status: "1"
+            },
+          ],
+          //复选框选中数据
+          multipleSelection: [],
+          //对话框
+          dialogFormVisible: false,
+          //分页,当前页码
+          currentPage: 4,
+        }
+      },
+      // 页面加载完成后发送
+      mounted() {
+        this.SelectionAll();
+      },
+    };
+    const app = Vue.createApp(App).use(ElementPlus).mount("#app");
+    // app.use(ElementPlus);
+    // app.mount("#app");
+  </script>
+
+</body>
+
+</html>

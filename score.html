@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score List</title>
+
+    <!-- 导入 Vue 3 -->
+    <script src="https:////unpkg.com/vue@next"></script>
+    <!-- 导入element样式 -->
+    <link rel="stylesheet" href="https:////unpkg.com/element-plus/dist/index.css" />
+    <!-- 导入组件库 -->
+    <script src="https:////unpkg.com/element-plus"></script>
+    <!-- 导入axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="app">
+    <div class="content-header">
+        <h1>Score List</h1>
+    </div>
+
+    <div class="app-container">
+        <div class="box">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline">
+
+                <el-form-item label="状态">
+                    <el-select v-model="formInline.status" placeholder="status">
+                        <el-option label="1" value="1"></el-option>
+                        <el-option label="0" value="0"></el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item label="名字">
+                    <el-input v-model="formInline.s_name" placeholder="名字"></el-input>
+                </el-form-item>
+                <el-form-item label="课程">
+                    <el-input v-model="formInline.c_id" placeholder="课程"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="dialogFormVisible = true">新建</el-button>
+                </el-form-item>
+            </el-form>
+        
+        </div>
+    </div>
+
+    <div id="theTable">
+        <el-table :data="tableData" stripe border style="width: 100%" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" align="center" width="55"> </el-table-column>
+            <!-- <el-table-column type="index" align="center" width="60"> </el-table-column> -->
+            <!-- <el-table-column prop="date" label="日期" width="180"> </el-table-column> -->
+            <el-table-column prop="s_id" width="60" label="id"> </el-table-column>
+            <el-table-column prop="s_name" align="center" label="姓名"> </el-table-column>
+            <el-table-column prop="c_id" align="center" label="课程"> </el-table-column>
+            <el-table-column prop="score" align="center" label="成绩"> </el-table-column>
+            <el-table-column align="center" label="操作">
+                <!-- element把一行封装成scope,scope.row得到该行数据 -->
+                <template v-slot="scope">
+                    <el-button type="primary">修改</el-button>
+                    <el-button type="danger" @click="handleDelete02(scope.row)">删除</el-button>
+                </template>
+
+            </el-table-column>
+        </el-table>
+    </div>
+
+    <div class="pagination-block">
+        <!-- <div class="demonstration">Jump to</div> -->
+        <el-pagination
+          v-model:currentPage="pagiantion.currentPages"
+          v-model:page-size="pagiantion.pageSize"
+          :small="small"
+          :disabled="disabled"
+          :background="background"
+          layout="total, prev, pager, next, jumper"
+          :total="pagiantion.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+    </div>
+
+    <div class="addForm">
+        <el-dialog title="编辑" v-model="dialogFormVisible">
+            <el-form ref="form" :model="formInline" label-width="80px">
+              <el-form-item label="id">
+                <el-input v-model="formInline.c_id"></el-input>
+              </el-form-item>
+    
+              <el-form-item label="姓名">
+                <el-input v-model="formInline.s_name"></el-input>
+              </el-form-item>
+    
+              <el-form-item label="课程id">
+                <!-- <el-switch v-model="formInline.c_id" active-value="1" inactive-value="0"></el-switch> -->
+                <el-input v-model="formInline.c_id"></el-input>
+              </el-form-item>
+    
+              <el-form-item label="成绩">
+                <el-input type="textarea" v-model="formInline.score"></el-input>
+              </el-form-item>
+    
+              <el-form-item>
+                <el-button type="primary" @click="AddItem">立即创建</el-button>
+                <el-button @click="dialogFormVisible = false">取消</el-button>
+              </el-form-item>
+            </el-form>
+          </el-dialog>
+    </div>
+
+</div>
+
+<script>
+    const App = {
+        data() {
+            return {
+                formInline: {
+                    status: '',
+                    s_id: '',
+                    s_name: '',
+                    c_id: '',
+                    score: '',
+                },
+                tableData: [
+                    {
+                        s_id: '1',
+                        s_name: '1',
+                        c_id: '1',
+                        score: '1',
+                    },
+                ],
+                multipleSelection: [],
+                pagiantion: {
+                    currentPage: 1,
+                    pageSize: 2,
+                    total: 20,
+                },
+                dialogFormVisible: false,
+            }
+        },
+        mounted() {
+            this.SelectionAll();
+        },
+        methods: {
+            SelectionAll: function() {  
+                // console.log('selection');
+                var _this = this;
+                axios({
+                    methods: "get",
+                    url: "/scores"
+                }).then(function (response) {
+                    _this.tableData = response.data;
+                });
+            },
+            AddItem(){
+                var _this = this;
+                axios({
+                    methods: "post",
+                    url: "/scores"
+                }).then(function (response) {
+                    //关闭弹窗，刷新数据
+                    if(response.data == true){
+                        _this.dialogFormVisible = false;
+                        _this.$message.success("success");
+                    }
+                    _this.SelectionAll();
+                });
+            },
+            handleDelete(row){
+                console.log(row);
+                var _this = this;
+                axios({
+                    methods: "delete",
+                    url: "/scores/" + row.score
+                }).then(function (response) {
+                    if(response.data == true){
+                        _this.$message.success("success");
+                    }else{
+                        _this.$message.success("fail");
+                    }
+                }).finally(function(){
+                    _this.SelectionAll();
+                });
+            },
+            handleDelete02(row){
+                
+                //确认弹窗
+                this.$confirm("是否永久删除","提示",{type:"info"}).then(function () {
+                    console.log("commit");
+                    handleDelete(row);
+                }).catch(function () {
+                    console.log("cancle");
+                });
+            },
+
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            handleSizeChange(val) {
+                console.log(`${val} items per page`)
+            },
+            handleCurrentChange(val) {
+                console.log(`current page: ${val}`)
+            },
+        },
+    };
+    const app = Vue.createApp(App).use(ElementPlus).mount("#app");
+</script>
+
+</body>
+
+</html>
