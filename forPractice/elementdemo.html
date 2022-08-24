@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- 导入 Vue 3 -->
+    <script src="https:////unpkg.com/vue@next"></script>
+    <!-- 导入element样式 -->
+    <link rel="stylesheet" href="https:////unpkg.com/element-plus/dist/index.css" />
+    <!-- 导入组件库 -->
+    <script src="https:////unpkg.com/element-plus"></script>
+</head>
+<body>
+    <!-- 导入axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <div id="app1">
+        <el-row class="mb-4">
+            <el-button>Default</el-button>
+            <el-button type="primary">Primary</el-button>
+            <el-button type="success">Success</el-button>
+            <el-button type="info">Info</el-button>
+            <el-button type="warning">Warning</el-button>
+            <el-button type="danger">Danger</el-button>
+            <el-button>中文</el-button>
+        </el-row>
+          
+        <h1>{{info}}</h1>
+        <el-button :plain="true">错误</el-button>
+    </div>
+
+    <script>
+        const app1 = {
+            data(){
+                return{
+                    info: " Message 消息提示 "
+                }
+            }
+        };
+        const app = Vue.createApp(app1);
+        app.use(ElementPlus);
+        app.mount("#app1");
+    </script>
+
+</body>
+</html>

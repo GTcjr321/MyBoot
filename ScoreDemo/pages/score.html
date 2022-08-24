@@ -57,9 +57,9 @@
     <div id="theTable">
         <el-table :data="tableData" stripe border style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" align="center" width="55"> </el-table-column>
-            <!-- <el-table-column type="index" align="center" width="60"> </el-table-column> -->
+            <el-table-column type="index" align="center" width="60"> </el-table-column>
             <!-- <el-table-column prop="date" label="日期" width="180"> </el-table-column> -->
-            <el-table-column prop="s_id" width="60" label="id"> </el-table-column>
+            <el-table-column prop="s_id" label="id"> </el-table-column>
             <el-table-column prop="s_name" align="center" label="姓名"> </el-table-column>
             <el-table-column prop="c_id" align="center" label="课程"> </el-table-column>
             <el-table-column prop="score" align="center" label="成绩"> </el-table-column>

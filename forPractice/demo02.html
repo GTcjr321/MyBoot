@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>login</title>
+
+
+</head>
+
+<body>
+    <script src="https://unpkg.com/vue@next"></script>
+    <div>
+        <form action="" id="form1">
+            <h1 id="">LOGIN IN</h1>
+            <div id="errmsg" style="display: none">用户名或密码不正确</div>
+            <p>Username:<input id="username" name="" type="text" /></p>
+            <p>Password:<input id="" name="" type="password" /></p>
+            <p>Remenber:<input id="" name="" type="checkbox" /></p>
+            <div id="subDiv">
+                <input type="submit" class="button" value="login" />
+                <input type="reset" class="button" value="reset" />
+                <a href="">without account?</a>
+            </div>
+        </form>
+    </div>
+
+    <div id="two-way-binding">
+        <!-- v-model双向绑定 v-bind改变标签 v-on绑定事件 -->
+        <input v-model="message" />
+        <p>{{ message }}</p>
+
+        <a v-bind:href="url">click it</a>
+        <input v-model="url" />
+
+        <input type="button" value="a button" v-on:click="click()">
+    </div>
+    <script type="text/javascript">
+        const TwoWayBinding = {
+            data() {
+                return {
+                    message: 'Hello Vue!',
+                    url: 'http://www.baidu.com'
+                }
+            },
+            methods:{
+                click(){
+                    alert("11111")
+                }
+            },
+            mounted(){
+                alert("加载完成，可以发送异步请求")
+            }
+        }
+
+        Vue.createApp(TwoWayBinding).mount('#two-way-binding')
+    </script>
+    
+    <div id="addrShow">
+        <div v-for="addr in addrs">
+            {{ addr }} <br />
+        </div>
+    </div>
+    <script>
+        const uu = {
+            data() {
+                return {
+                    addrs:["杭州", "上海", "台州"]
+                }
+            }
+        };
+        Vue.createApp(uu).mount('#addrShow');
+    </script>
+
+
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js">
+        axios({
+            method: "get",
+            url: "http://localhost:8080/servlet"
+        }).then(function (response) {
+
+        });
+        axios.post("http://localhost:8080", "responseText")
+            .then(function (response) {
+                alert(response.responseText)
+            });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <div id="overview1">
+        <table id = "table1" cellspacing="0" cellpadding="0" width="100%" border="1">
+            <tr>
+                <th width="100%">序号</th>
+                <th>name</th>
+                <th>order</th>
+                <th>description</th>
+                <th>status</th>
+                <th>option</th>
+            </tr>
+
+            <tr v-for="(brand,i) in brands" align="center">
+                <td>{{i}}</td>
+                <td>{{brand.brandname}}</td>
+                <td>{{brand.order}}</td>
+                <td>{{brand.description}}</td>
+                <td>{{brand.status}}</td>
+                <td><a href="https://">修改</a><a href="https://">删除</a></td>
+            </tr>
+
+        </table>
+    </div>
+    
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript">
+        const vueFun1 = {
+            data(){
+                return{
+                    brands: []
+                }
+            },
+            mounted(){
+                var _this = this;
+                // 页面加载完成后发送异步请求，查询数据
+                axios({
+                    method:"get",
+                    url:"http://localhost:8080"
+                }).then(function(resp){
+                    _this.brands = resp.data;
+                })
+            }
+        }
+        Vue.createApp(vueFun1).mount('#overview1')
+    </script>
+</body>
+</html>
